@@ -30,7 +30,7 @@ class NewVisitorTest(unittest.TestCase):
         # 应用邀请她输入一个待办事项
         inputbox = self.driver.find_element_by_id("id_input")
         self.assertEqual(inputbox.get_attribute('placeholder'),
-                         'Enter a to-do item')
+                         '输入你想要做的事情')
         # placeholder是html5新增的一个属性，当input或者textarea设置了该属性后，
         # 该值的内容将作为灰字提示显示在文本框中，当文本框获得焦点（或输入内容)时提示文字消失.
 
@@ -43,10 +43,10 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_element_by_tag_name('tr')
+        table = self.driver.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(any(row.text == '1: Buy peacock feathers'
-                            for row in rows))
+                            for row in rows), '未在表格中显示新的待办事项')
 
         # 页面中又显示了一个文本框，可以输入其他的待办事项
         # 她输入了"Use peacock feathers to make a fly"
