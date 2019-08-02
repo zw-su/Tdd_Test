@@ -6,9 +6,10 @@ from selenium import webdriver
 import unittest
 import time
 from selenium.webdriver.common.keys import Keys
+from django.test import LiveServerTestCase
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
 
@@ -23,7 +24,9 @@ class NewVisitorTest(unittest.TestCase):
     def test_can_start(self):
         # 爱吃素听说有一个很酷的在线代办事项应用
         # 她去看了这个应用的首页
-        self.driver.get("http://localhost:8000/")
+        # self.driver.get(self.live_server_url)报
+        # Exception happened during processing of request 
+        self.driver.get('http://localhost:8000')
 
         # 她注意到网页的标题和头部都包含"To-Do"这个词
         # assert "To-Do" in driver.title
