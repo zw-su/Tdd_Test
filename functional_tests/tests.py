@@ -7,6 +7,9 @@ import unittest
 import time
 from selenium.webdriver.common.keys import Keys
 from django.test import LiveServerTestCase
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 
 class NewVisitorTest(LiveServerTestCase):
@@ -17,16 +20,19 @@ class NewVisitorTest(LiveServerTestCase):
         self.driver.quit()
 
     def check_rowtext_in_listTable(self, row_text):
-        table = self.driver.find_element_by_id('id_list_table')
+        # table = self.driver.find_element_by_id('id_list_table')
+        locator = (By.ID, 'id_list_table')
+        table = WebDriverWait(self.driver, 10).\
+            until(EC.presence_of_element_located(locator))
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
 
     def test_can_start(self):
         # 爱吃素听说有一个很酷的在线代办事项应用
         # 她去看了这个应用的首页
-        # self.driver.get(self.live_server_url)报
-        # Exception happened during processing of request 
-        self.driver.get('http://localhost:8000')
+        self.driver.get(self.live_server_url)
+        # 报Exception happened during processing of request
+        # self.driver.get('http://localhost:8000')  # 数据还是走了mysql数据库
 
         # 她注意到网页的标题和头部都包含"To-Do"这个词
         # assert "To-Do" in driver.title
@@ -49,7 +55,6 @@ class NewVisitorTest(LiveServerTestCase):
         # 她按回车键后，页面更新了
         # 待办事项表格中显示了"1: Buy peacock feathers"
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
         self.check_rowtext_in_listTable('1: Buy peacock feathers')
 
         # 页面中又显示了一个文本框，可以输入其他的待办事项
@@ -58,24 +63,64 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.driver.find_element_by_id("id_input")
         inputbox.send_keys("Use peacock feathers to make a fly")
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(2)
 
         # 页面再次更新, 她的清单中显示了这两个待办事项
         self.check_rowtext_in_listTable('1: Buy peacock feathers')
         self.check_rowtext_in_listTable(
             '2: Use peacock feathers to make a fly')
 
+        # 她很满意，去睡觉了
+
+    def test_multiple_llists_at_different_url(self):
+        # 爱吃素新建了一个待办事项
+        self.driver.get(self.live_server_url)
+        inputbox = self.driver.find_element_by_id('id_input')
+        inputbox.send_keys('Buy peacock feathers')
+        inputbox.send_keys(Keys.ENTER)
+        self.check_rowtext_in_listTable('1: Buy peacock feathers')
+
         # 爱吃素想指定这个网战是否会记住她的清单
         # 她看到网站为她生成了一个唯一的URL
-        # 而且页面中有一些文字解说这个功能
-        self.fail('Finish the test')
-# 她访问那个URL,发现她的待办事项列表还在
+        su_list_url = self.driver.current_url
+        self.assertRegex(su_list_url, 'lists/.+?')
 
-# 她很满意，去睡觉了
+        # 现在一个叫做爱吃荤的新用户访问了网站
+
+        # 我们使用一个新浏览器会话
+        # 确保爱吃素的信息不会从cookie泄漏出去
+        self.driver.quit()
+        self.browser = webdriver.Chrome()
+
+        # 爱吃昏访问首页，页面中看不到爱吃素的清单
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_elements_by_tag_name('body')
+        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertNotIn('make a fly', page_text)
+
+        # 爱吃荤输入一个新待办事项，新建一个清单
+        # 他不像爱吃素那样兴趣盎然
+        inputbox = self.browser.find_elements_by_id('id_input')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.ENTER)
+        self.check_rowtext_in_listTable('1: Buy milk')
+
+        # 爱吃荤获得了他的唯一URL
+        hun_list_url = self.browser.current_url
+        self.assertRegex(hun_list_url, 'lists/.+')
+        self.assertNotEqual(hun_list_url, su_list_url)
+
+        # 这个页面还是没有爱吃素的清单
+        page_text = self.browser.find_element_by_tag_name('body')
+        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertIn('Buy milk', page_text)
+
+        # 而且页面中有一些文字解说这个功能
+        # self.fail('Finish the test')
 
 
 # driver.close()关闭当前窗口
 # driver.quit()退出驱动关闭所有窗口
+
 
 if __name__ == "__main__":
     # unittest.main(warnings='ignore')
