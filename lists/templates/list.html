@@ -3,12 +3,17 @@
 		<title>To-Do lists</title>
 	</head>
 	<body>
-		<h1>开始一个新的待办事项</h1>
+		<h1>Your To-Do list</h1>
 		<form method='post' action='/'>
 			<input id='id_input' name='item_text' placeholder="输入你想要做的事情" />
 			{% csrf_token %}
 		</form>
-		
+		<table id='id_list_table'>
+			{% for item in items %}
+				<tr>
+					<td>{{ forloop.counter }}: {{ item.text }}</td>
+				</tr>
+			{% endfor %}
+		</table>
 	</body>
-
 </html>

@@ -39,7 +39,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn("To-Do", self.driver.title)
         header_text = self.driver.find_element_by_tag_name('h1').text
         # 如 assertEqual 、assertTrue 和assertFalse 等。
-        self.assertIn('To-Do', header_text)
+        self.assertIn('开始', header_text)
 
         # 应用邀请她输入一个待办事项
         inputbox = self.driver.find_element_by_id("id_input")
@@ -91,15 +91,16 @@ class NewVisitorTest(LiveServerTestCase):
         self.driver.quit()
         self.browser = webdriver.Chrome()
 
-        # 爱吃昏访问首页，页面中看不到爱吃素的清单
+        # 爱吃荤访问首页，页面中看不到爱吃素的清单
         self.browser.get(self.live_server_url)
         page_text = self.browser.find_elements_by_tag_name('body')
+        print("***%%%^^>>>>爱吃荤", page_text)
         self.assertNotIn('Buy peacock feathers', page_text)
-        self.assertNotIn('make a fly', page_text)
+        # self.assertNotIn('make a fly', page_text)
 
         # 爱吃荤输入一个新待办事项，新建一个清单
         # 他不像爱吃素那样兴趣盎然
-        inputbox = self.browser.find_elements_by_id('id_input')
+        inputbox = self.browser.find_element_by_id('id_input')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
         self.check_rowtext_in_listTable('1: Buy milk')
@@ -110,7 +111,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotEqual(hun_list_url, su_list_url)
 
         # 这个页面还是没有爱吃素的清单
-        page_text = self.browser.find_element_by_tag_name('body')
+        page_text = self.browser.find_elements_by_tag_name('body')
         self.assertNotIn('Buy peacock feathers', page_text)
         self.assertIn('Buy milk', page_text)
 
