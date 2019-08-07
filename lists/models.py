@@ -6,7 +6,7 @@ from django.db import models
 
 
 class List(models.Model):
-    list_id = models.IntegerField(default=1)
+    pass
 
 
 class Item(models.Model):

@@ -32,10 +32,10 @@ class ListViewTest(TestCase):
 
     def test_use_list_template(self):
         list_ = List.objects.create()
-        print('list_', list_.list_id)
-        # other_list = List.objects.create()
-        # print('other_list', other_list.list_id)
-        response = self.client.get(f'/lists/{list_.list_id}/')
+        print('list_', list_.id)
+        other_list = List.objects.create()
+        print('other_list', other_list.id)
+        response = self.client.get(f'/lists/{list_.id}/')
         self.assertTemplateUsed(response, 'list.html')
 
     # def test_displays_all_items(self):
@@ -58,7 +58,7 @@ class NewListTest(TestCase):
         response = self.client.post(
             '/lists/new', data={'item_text': 'A new list item'})
         new_list = List.objects.first()
-        self.assertRedirects(response, f'/lists/{new_list.list_id}/')
+        self.assertRedirects(response, f'/lists/{new_list.id}/')
 
 
 class ListAndItemModelsTest(TestCase):
