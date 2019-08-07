@@ -75,9 +75,9 @@ class NewVisitorTest(LiveServerTestCase):
         # 爱吃素新建了一个待办事项
         self.driver.get(self.live_server_url)
         inputbox = self.driver.find_element_by_id('id_input')
-        inputbox.send_keys('Buy peacock feathers')
+        inputbox.send_keys('Buy fruit')
         inputbox.send_keys(Keys.ENTER)
-        self.check_rowtext_in_listTable('1: Buy peacock feathers')
+        self.check_rowtext_in_listTable('1: Buy fruit')
 
         # 爱吃素想指定这个网战是否会记住她的清单
         # 她看到网站为她生成了一个唯一的URL
@@ -112,7 +112,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # 这个页面还是没有爱吃素的清单
         page_text = self.browser.find_elements_by_tag_name('body')
-        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertNotIn('Buy fruit', page_text)
         self.assertIn('Buy milk', page_text)
 
         # 而且页面中有一些文字解说这个功能
