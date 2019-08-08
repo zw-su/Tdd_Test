@@ -33,6 +33,12 @@ class NewVisitorTest(LiveServerTestCase):
         self.driver.get(self.live_server_url)
         # 报Exception happened during processing of request
         # self.driver.get('http://localhost:8000')  # 数据还是走了mysql数据库
+        self.driver.set_window_size(1024, 768)
+
+        # 她看到了输入框完美的居中显示
+        inputbox = self.driver.find_element_by_id('id_input')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2, 512, delta=10)
 
         # 她注意到网页的标题和头部都包含"To-Do"这个词
         # assert "To-Do" in driver.title

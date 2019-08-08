@@ -1,14 +1,6 @@
-<html>
-	<head>
-		<title>To-Do lists</title>
-	</head>
-	<body>
-		<h1>开始一个新的待办事项</h1>
-		<form method='post' action='/lists/new'>
-			<input id='id_input' name='item_text' placeholder="输入你想要做的事情" />
-			{% csrf_token %}
-		</form>
-		
-	</body>
 
-</html>
+{% extends 'base.html' %}
+
+{% block header_text %}开始一个新的待办事项{% endblock %}
+
+{% block form_action %}/lists/new{% endblock %}
