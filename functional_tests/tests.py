@@ -6,17 +6,19 @@ from selenium import webdriver
 import unittest
 import time
 from selenium.webdriver.common.keys import Keys
-from django.test import LiveServerTestCase
+# from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
 
     def tearDown(self):
+        self.driver.refresh()
         self.driver.quit()
 
     def check_rowtext_in_listTable(self, row_text):
@@ -95,29 +97,29 @@ class NewVisitorTest(LiveServerTestCase):
         # 我们使用一个新浏览器会话
         # 确保爱吃素的信息不会从cookie泄漏出去
         self.driver.quit()
-        self.browser = webdriver.Chrome()
+        self.driver = webdriver.Chrome()
 
         # 爱吃荤访问首页，页面中看不到爱吃素的清单
-        self.browser.get(self.live_server_url)
-        page_text = self.browser.find_elements_by_tag_name('body')
+        self.driver.get(self.live_server_url)
+        page_text = self.driver.find_elements_by_tag_name('body')
         print("***%%%^^>>>>爱吃荤", page_text)
         self.assertNotIn('Buy peacock feathers', page_text)
         # self.assertNotIn('make a fly', page_text)
 
         # 爱吃荤输入一个新待办事项，新建一个清单
         # 他不像爱吃素那样兴趣盎然
-        inputbox = self.browser.find_element_by_id('id_input')
+        inputbox = self.driver.find_element_by_id('id_input')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
         self.check_rowtext_in_listTable('1: Buy milk')
 
         # 爱吃荤获得了他的唯一URL
-        hun_list_url = self.browser.current_url
+        hun_list_url = self.driver.current_url
         self.assertRegex(hun_list_url, 'lists/.+')
         self.assertNotEqual(hun_list_url, su_list_url)
 
         # 这个页面还是没有爱吃素的清单
-        page_text = self.browser.find_elements_by_tag_name('body')
+        page_text = self.driver.find_elements_by_tag_name('body')
         self.assertNotIn('Buy fruit', page_text)
         self.assertIn('Buy milk', page_text)
 
