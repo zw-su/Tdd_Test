@@ -4,7 +4,7 @@
 
 from selenium import webdriver
 import unittest
-import time
+import time, os
 from selenium.webdriver.common.keys import Keys
 # from django.test import LiveServerTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -16,6 +16,9 @@ from selenium.webdriver.common.by import By
 class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
+        staging_server = os.environ.get("STAGING_SERVER")
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server
 
     def tearDown(self):
         self.driver.refresh()
@@ -102,7 +105,6 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # 爱吃荤访问首页，页面中看不到爱吃素的清单
         self.driver.get(self.live_server_url)
         page_text = self.driver.find_elements_by_tag_name('body')
-        print("***%%%^^>>>>爱吃荤", page_text)
         self.assertNotIn('Buy peacock feathers', page_text)
         # self.assertNotIn('make a fly', page_text)
 
