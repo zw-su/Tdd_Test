@@ -1,0 +1,19 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+PIDFile=/run/gunicorn/pid
+User=root
+Group=root
+RuntimeDirectory=gunicorn
+WorkingDirectory=/home/zw/sites/xfsu.top/gunicorn_blog/
+ExecStart=/usr/bin/gunicorn --pid /run/gunicorn/pid   \
+          --workers 2 --bind unix:/home/zw/sites/xfsu.top/gunicorn_blog/myblog.socket myproject.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

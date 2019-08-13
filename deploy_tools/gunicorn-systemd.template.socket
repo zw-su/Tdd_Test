@@ -1,0 +1,8 @@
+[Unit]
+Description=gunicorn socket
+
+[Socket]
+ListenStream=/home/zw/sites/xfsu.top/gunicorn_blog/myblog.socket 
+
+[Install]
+WantedBy=sockets.target
