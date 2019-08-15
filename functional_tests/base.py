@@ -3,12 +3,15 @@
 # 第一个TDD测试的脚本
 
 from selenium import webdriver
-import os
+import os, time
 # from django.test import LiveServerTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
+
+MAX_WAIT = 8
 
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -21,6 +24,18 @@ class FunctionalTest(StaticLiveServerTestCase):
     def tearDown(self):
         self.driver.refresh()
         self.driver.quit()
+
+    def wait_for(self, fn):
+        '''等待元素找到'''
+        start_time = time.time()
+        while True:
+            try:
+                return fn()
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
+
 
     def check_rowtext_in_listTable(self, row_text):
         # table = self.driver.find_element_by_id('id_list_table')
