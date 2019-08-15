@@ -36,11 +36,11 @@ class ListViewTest(TestCase):
         self.assertTemplateUsed(response, 'list.html')
 
     def test_displays_only_items(self):
-        correct_list = List.objects.create()        
+        correct_list = List.objects.create()
         Item.objects.create(text='itemey 1', list_id=correct_list)
         Item.objects.create(text='itemey 2', list_id=correct_list)
 
-        other_list = List.objects.create()        
+        other_list = List.objects.create()
         Item.objects.create(text='other itemey 1', list_id=other_list)
         Item.objects.create(text='other itemey 2', list_id=other_list)
         response = self.client.get(f'/lists/{correct_list.id}/')
@@ -75,30 +75,3 @@ class NewListTest(TestCase):
 
         response = self.client.get(f'/lists/{correct_list.id}/')
         self.assertEqual(response.context['list'], correct_list)
-
-
-class ListAndItemModelsTest(TestCase):
-
-    def test_saving_and_retrieving_items(self):
-        list_ = List()
-        list_.save()
-        first_item = Item()
-        first_item.text = 'the first list item'
-        first_item.list_id = list_
-        first_item.save()
-
-        second_item = Item()
-        second_item.text = 'the second item'
-        second_item.list_id = list_
-        second_item.save()
-
-        saved_list = List.objects.first()
-        self.assertEqual(saved_list, list_)
-
-        saved_items = Item.objects.all()
-        self.assertEqual(saved_items.count(), 2)
-
-        first_saved_item = saved_items[0]
-        second_saved_item = saved_items[1]
-        self.assertEqual(first_saved_item.text, 'the first list item')
-        self.assertEqual(first_saved_item.list_id, list_)
