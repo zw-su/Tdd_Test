@@ -75,3 +75,18 @@ class NewListTest(TestCase):
 
         response = self.client.get(f'/lists/{correct_list.id}/')
         self.assertEqual(response.context['list'], correct_list)
+
+    def test_validation_errors_are_sent_back_home(self):
+        '''测试数据为空时，是否会显示错误'''
+        response = self.client.post('/lists/new', data={'item_text': ''})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'home.html')
+        expect_error = '你不能输入一个空的待办事项'
+        self.assertContains(response, expect_error)
+
+    def test_invalid_list_items_arent_saved(self):
+        '''测试数据为空时，数据库是否会保存'''
+        self.client.post('/lists/new', data={'item_text': ''})
+        self.assertEqual(List.objects.count(), 0)
+        self.assertEqual(Item.objects.count(), 0)

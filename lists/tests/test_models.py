@@ -2,6 +2,7 @@
 
 from django.test import TestCase
 from lists.models import Item, List
+from django.core.exceptions import ValidationError
 # from django.http import HttpRequest
 # from django.template.loader import render_to_string
 # Create your tests here.
@@ -33,3 +34,11 @@ class ListAndItemModelsTest(TestCase):
         self.assertEqual(first_saved_item.text, 'the first list item')
         self.assertEqual(first_saved_item.list_id, list_)
         self.assertEqual(second_saved_item.text, 'the second item')
+
+    def test_cannot_save_empty_list_items(self):
+        '''查看数据库是否会保存空数据'''
+        list_ = List.objects.create()
+        item = Item(list_id=list_, text='')
+        with self.assertRaises(ValidationError):
+            item.save()
+            item.full_clean()

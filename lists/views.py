@@ -3,7 +3,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from lists.models import Item, List
-
+from django.core.exceptions import ValidationError
 # Create your views here.
 
 
@@ -19,7 +19,14 @@ def view_list(request, list_id):
 
 def new_list(request):
     list_ = List.objects.create()
-    Item.objects.create(text=request.POST['item_text'], list_id=list_)
+    item = Item(text=request.POST['item_text'], list_id=list_)
+    try:
+        item.full_clean()
+        item.save()
+    except ValidationError:
+        list_.delete()
+        error = '你不能输入一个空的待办事项'
+        return render(request, 'home.html', {'error':error})
     return redirect(f'/lists/{list_.id}/')
 
 
