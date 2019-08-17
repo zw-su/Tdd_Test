@@ -25,6 +25,10 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.driver.refresh()
         self.driver.quit()
 
+    def get_item_input_box(self):
+        '''定位input元素'''
+        return self.driver.find_element_by_id('id_text')
+
     def wait_for(self, fn):
         '''等待元素找到'''
         start_time = time.time()

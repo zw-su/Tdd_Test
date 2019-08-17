@@ -27,7 +27,7 @@ class NewVisitorTest(FunctionalTest):
         self.assertIn('开始', header_text)
 
         # 应用邀请她输入一个待办事项
-        inputbox = self.driver.find_element_by_id("id_input")
+        inputbox = self.get_item_input_box()
         self.assertEqual(inputbox.get_attribute('placeholder'),
                          '输入你想要做的事情')
         # placeholder是html5新增的一个属性，当input或者textarea设置了该属性后，
@@ -45,7 +45,7 @@ class NewVisitorTest(FunctionalTest):
         # 页面中又显示了一个文本框，可以输入其他的待办事项
         # 她输入了"Use peacock feathers to make a fly"
         # 爱吃素做事很有条理
-        inputbox = self.driver.find_element_by_id("id_input")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys("Use peacock feathers to make a fly")
         inputbox.send_keys(Keys.ENTER)
 
@@ -59,7 +59,7 @@ class NewVisitorTest(FunctionalTest):
     def test_multiple_llists_at_different_url(self):
         # 爱吃素新建了一个待办事项
         self.driver.get(self.live_server_url)
-        inputbox = self.driver.find_element_by_id('id_input')
+        inputbox = self.get_item_input_box()
         inputbox.send_keys('Buy fruit')
         inputbox.send_keys(Keys.ENTER)
         self.check_rowtext_in_listTable('1: Buy fruit')
@@ -84,7 +84,7 @@ class NewVisitorTest(FunctionalTest):
 
         # 爱吃荤输入一个新待办事项，新建一个清单
         # 他不像爱吃素那样兴趣盎然
-        inputbox = self.driver.find_element_by_id('id_input')
+        inputbox = self.get_item_input_box()
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
         self.check_rowtext_in_listTable('1: Buy milk')

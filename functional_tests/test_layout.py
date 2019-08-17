@@ -14,7 +14,7 @@ class LayoutAndStylingTest(FunctionalTest):
         self.driver.set_window_size(1024, 768)
 
         # 她看到了输入框完美的居中显示(测试CSS样式)
-        inputbox = self.driver.find_element_by_id('id_input')
+        inputbox = self.get_item_input_box()
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2, 512, delta=10)
 
