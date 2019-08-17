@@ -15,26 +15,21 @@ def home_page(request):
 def view_list(request, list_id):
     list_ = List.objects.get(id=list_id)
     error = None
+    form = ItemForm()
     # items = Item.objects.filter(list_id=list_)
     if request.method == "POST":
-        try:
-            item = Item(text=request.POST['text'], list_id=list_)
-            item.full_clean()
-            item.save()
+        form = ItemForm(data=request.POST)
+        if form.is_valid():
+            Item.objects.create(text=request.POST['text'], list_id=list_)
             return redirect(list_)
-        except ValidationError:
-            error = '你不能输入一个空的待办事项'
-    return render(request, 'list.html', {'list': list_, "error": error})
+    return render(request, 'list.html', {'list': list_, 'form': form})
 
 
 def new_list(request):
-    list_ = List.objects.create()
-    item = Item(text=request.POST['text'], list_id=list_)
-    try:
-        item.full_clean()
-        item.save()
-    except ValidationError:
-        list_.delete()
-        error = '你不能输入一个空的待办事项'
-        return render(request, 'home.html', {'error': error})
-    return redirect(f'/lists/{list_.id}/')
+    form = ItemForm(data=request.POST)
+    if form.is_valid():
+        list_ = List.objects.create()
+        Item.objects.create(text=request.POST['text'], list_id=list_)
+        return redirect(list_)
+    else:
+        return render(request, 'home.html', {"form": form})

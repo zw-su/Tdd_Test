@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import resolve
 from lists.views import home_page
 from lists.models import Item, List
-from lists.forms import ItemForm
+from lists.forms import ItemForm, EMPTY_ITEM_ERROR
 # from django.http import HttpRequest
 # from django.template.loader import render_to_string
 # Create your tests here.
@@ -36,6 +36,12 @@ class ListViewTest(TestCase):
         list_ = List.objects.create()
         response = self.client.get(f'/lists/{list_.id}/')
         self.assertTemplateUsed(response, 'list.html')
+
+    def test_displays_item_form(self):
+        list_ = List.objects.create()
+        response = self.client.get(f'/lists/{list_.id}/')
+        self.assertIsInstance(response.context['form'], ItemForm)
+        self.assertContains(response, 'name="text"')
 
     def test_displays_only_items(self):
         correct_list = List.objects.create()
@@ -75,31 +81,48 @@ class ListViewTest(TestCase):
         self.assertRedirects(response, f'/lists/{correct_list.id}/')
         # self.assertEqual(response.context['list'], correct_list)
 
-    def test_validation_errors_are_sent_back_home(self):
-        '''测试数据为空时，是否会显示错误'''
+    def post_invalid_input(self):
         list_ = List.objects.create()
         response = self.client.post(
             f'/lists/{list_.id}/', data={'text': ''})
+        return response
 
+    def test_for_invalid_input_nothing_saved(self):
+        self.post_invalid_input()
+        self.assertEqual(Item.objects.count(), 0)
+
+    def test_for_invalid_input_renders_list(self):
+        response = self.post_invalid_input()
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'list.html')
-        expect_error = '你不能输入一个空的待办事项'
-        self.assertContains(response, expect_error)
+
+    def test_for_invalid_input_passes_form(self):
+        response = self.post_invalid_input()
+        self.assertIsInstance(response.context['form'], ItemForm)
+
+    def test_for_invalid_input_shows_error(self):
+        response = self.post_invalid_input()
+        self.assertContains(response, EMPTY_ITEM_ERROR)
 
 
-# class NewListTest(TestCase):
+class NewListTest(TestCase):
 
-#     def test_validation_errors_are_sent_back_home(self):
-#         '''测试数据为空时，是否会显示错误'''
-#         response = self.client.post('/lists/new', data={'text': ''})
+    def test_for_invalid_input_renders_home(self):
+        response = self.client.post('/lists/new', data={'text': ''})
 
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'home.html')
-#         expect_error = '你不能输入一个空的待办事项'
-#         self.assertContains(response, expect_error)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'home.html')
 
-#     def test_invalid_list_items_arent_saved(self):
-#         '''测试数据为空时，数据库是否会保存'''
-#         self.client.post('/lists/new', data={'text': ''})
-#         self.assertEqual(List.objects.count(), 0)
-#         self.assertEqual(Item.objects.count(), 0)
+    def test_validation_errors_are_shown_on_home(self):
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertContains(response, EMPTY_ITEM_ERROR)
+
+    def test_for_invalid_input_passes_form_to_template(self):
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertIsInstance(response.context['form'], ItemForm)
+
+    def test_invalid_list_items_arent_saved(self):
+        '''测试数据为空时，数据库是否会保存'''
+        self.client.post('/lists/new', data={'text': ''})
+        self.assertEqual(List.objects.count(), 0)
+        self.assertEqual(Item.objects.count(), 0)

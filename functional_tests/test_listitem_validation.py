@@ -18,10 +18,11 @@ class ItemValidationTest(FunctionalTest):
         input_element = self.get_item_input_box()
         input_element.send_keys(Keys.ENTER)
 
-        # 首页刷新了，显示一个错误信息
-        # 提示待办事项不能为空
-        error_text = self.driver.find_element_by_css_selector('.has-error').text       
-        self.wait_for(lambda: self.assertEqual(error_text, '你不能输入一个空的待办事项'))
+        # 浏览器截获了请求
+        # 清单页面不会加载
+
+        self.wait_for(
+            lambda: self.driver.find_element_by_css_selector('#id_text:invalid'))
 
         # self.assertEqual(self.driver.find_element_by_css_selector('.has-error'),
         # "你不能输入一个空的待办事项")
@@ -35,11 +36,15 @@ class ItemValidationTest(FunctionalTest):
         # 她有点了调皮，又提交了一个空待办事项
         self.get_item_input_box().send_keys(Keys.ENTER)
 
-        # 在清单页面她看到了一个类似的错误信息
-        error_text = self.driver.find_element_by_css_selector('.has-error').text
-        self.wait_for(lambda: self.assertEqual(error_text, '你不能输入一个空的待办事项'))
+        # 浏览器这次也不会放行
+        self.check_rowtext_in_listTable('1: buy milk')
+
+        self.wait_for(
+            lambda: self.driver.find_element_by_css_selector('#id_text:invalid'))
         # 输入文字之后就没问题了
         input_element = self.get_item_input_box()
         input_element.send_keys('buy banana')
+        self.wait_for(
+            lambda: self.driver.find_element_by_css_selector('#id_text:valid'))
         input_element.send_keys(Keys.ENTER)
         self.check_rowtext_in_listTable('2: buy banana')
