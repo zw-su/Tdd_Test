@@ -99,5 +99,4 @@ class NewVisitorTest(FunctionalTest):
         self.assertNotIn('1: Buy fruit', page_text)
         self.assertIn('1: Buy milk', page_text)
 
-        # 而且页面中有一些文字解说这个功能
-       
+        # 而且页面中有一些文字解说这个
