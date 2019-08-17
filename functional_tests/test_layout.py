@@ -10,6 +10,7 @@ class LayoutAndStylingTest(FunctionalTest):
 
     def test_layout_styling(self):
         # 把浏览器窗口设置为1024*768大小
+        self.driver.get(self.live_server_url)
         self.driver.set_window_size(1024, 768)
 
         # 她看到了输入框完美的居中显示(测试CSS样式)

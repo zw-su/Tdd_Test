@@ -78,8 +78,8 @@ class NewVisitorTest(FunctionalTest):
 
         # 爱吃荤访问首页，页面中看不到爱吃素的清单
         self.driver.get(self.live_server_url)
-        page_text = self.driver.find_elements_by_tag_name('body')
-        self.assertNotIn('Buy peacock feathers', page_text)
+        page_text = [i.text for i in self.driver.find_elements_by_css_selector('#id_list_table tr td')]
+        self.assertNotIn('1: Buy fruit', page_text)
         # self.assertNotIn('make a fly', page_text)
 
         # 爱吃荤输入一个新待办事项，新建一个清单
@@ -95,9 +95,9 @@ class NewVisitorTest(FunctionalTest):
         self.assertNotEqual(hun_list_url, su_list_url)
 
         # 这个页面还是没有爱吃素的清单
-        page_text = self.driver.find_elements_by_tag_name('body')
-        self.assertNotIn('Buy fruit', page_text)
-        self.assertIn('Buy milk', page_text)
+        page_text = [i.text for i in self.driver.find_elements_by_css_selector('#id_list_table tr td')]
+        self.assertNotIn('1: Buy fruit', page_text)
+        self.assertIn('1: Buy milk', page_text)
 
         # 而且页面中有一些文字解说这个功能
-        self.fail('Finish the test')
+       
