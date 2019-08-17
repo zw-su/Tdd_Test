@@ -20,7 +20,7 @@ def view_list(request, list_id):
             item = Item(text=request.POST['item_text'], list_id=list_)
             item.full_clean()
             item.save()
-            return redirect(f'/lists/{list_.id}/')
+            return redirect(list_)
         except ValidationError:       
             error = '你不能输入一个空的待办事项'
     return render(request, 'list.html', {'list': list_, "error":error})
