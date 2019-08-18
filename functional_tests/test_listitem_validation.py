@@ -48,3 +48,19 @@ class ItemValidationTest(FunctionalTest):
             lambda: self.driver.find_element_by_css_selector('#id_text:valid'))
         input_element.send_keys(Keys.ENTER)
         self.check_rowtext_in_listTable('2: buy banana')
+
+    def test_cannot_add_duplicate_items(self):
+        # 爱吃素访问首页，新建一个清单
+        self.driver.get(self.live_server_url)
+        self.get_item_input_box.send_keys('Buy wellies')
+        self.get_item_input_box.send_keys(Keys.ENTER)
+        self.check_rowtext_in_listTable('1: Buy wellies')
+
+        # 她不小心输入了一个重复的待办事项
+        self.get_item_input_box.send_keys('Buy wellies')
+        self.get_item_input_box.send_keys(Keys.ENTER)
+
+        # 她看到一条有帮助的错误消息
+        self.wait_for(lambda: self.assertEqual(
+            self.driver.find_element_by_css_selector('.has-errorr'),
+            '你的待办事项里已经有这个了'))
