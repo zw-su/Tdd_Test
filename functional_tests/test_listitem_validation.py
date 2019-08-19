@@ -52,15 +52,19 @@ class ItemValidationTest(FunctionalTest):
     def test_cannot_add_duplicate_items(self):
         # 爱吃素访问首页，新建一个清单
         self.driver.get(self.live_server_url)
-        self.get_item_input_box.send_keys('Buy wellies')
-        self.get_item_input_box.send_keys(Keys.ENTER)
+        self.get_item_input_box().send_keys('Buy wellies')
+        self.get_item_input_box().send_keys(Keys.ENTER)
         self.check_rowtext_in_listTable('1: Buy wellies')
 
         # 她不小心输入了一个重复的待办事项
-        self.get_item_input_box.send_keys('Buy wellies')
-        self.get_item_input_box.send_keys(Keys.ENTER)
+        self.get_item_input_box().send_keys('Buy wellies')
+        self.get_item_input_box().send_keys(Keys.ENTER)
 
         # 她看到一条有帮助的错误消息
         self.wait_for(lambda: self.assertEqual(
-            self.driver.find_element_by_css_selector('.has-errorr'),
-            '你的待办事项里已经有这个了'))
+            self.driver.find_element_by_css_selector('.has-error').text,
+            '你已经有这个待办事项了'))
+
+    def test_error_messages_are_cleared(self):
+        # 爱吃素新建了一个清单，但方法不当，所以出现了一个验证错误
+        pass
