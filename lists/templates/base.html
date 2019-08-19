@@ -21,7 +21,7 @@
 							{% csrf_token %}
 							{% if form.errors %}
 								<div class="form-group has-error">
-									<span class='help-block'>{{ form.text.errors }}</span>
+									<span class='help-block' style="color:red;">{{ form.text.errors }}</span>
 								</div>
 							{% endif %}
 						</form>						
@@ -38,6 +38,13 @@
 			</div>
 
 		</div>
+		<script src='{% static "jquery-3.4.1.min.js" %}'></script>
+		<script src='{% static "list.js" %}'></script>
+		<script>
+			$(document).ready(function(){
+			    window.Superlists.initialize();
+			});
+		</script>
 	</body>
 
 </html>
