@@ -24,7 +24,7 @@ class LoginTest(FunctionalTest):
         # 出现一条消息，告诉她邮件已经发出
         self.wait_for(lambda: self.assertIn(
             'Check your email',
-            self.driver.find_element_by_tag_name('p').text))
+            self.driver.find_element_by_css_selector('.alert.alert-success').text))
 
         # 她查看邮件,看到一条信息
         email = mail.outbox[0]
@@ -45,7 +45,7 @@ class LoginTest(FunctionalTest):
 
         # 她登陆了！
         self.wait_for(lambda:
-                      self.driver.find_element_by_link_text('logged out'))
+                      self.driver.find_element_by_link_text('Log out'))
 
         navbar = self.driver.find_element_by_css_selector('.navbar')
         self.assertIn(TEST_EMAIL, navbar.text)

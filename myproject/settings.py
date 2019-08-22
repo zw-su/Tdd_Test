@@ -38,14 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lists',
-    
+    'accounts',
 ]
 
-# AUTH_USER_MODEL = 'accounts.ListUser'
-# AUTHENTICATION_BACKENDS = [
-#    'accounts.authentication.PasswordLessAuthenticationBackend',
-#    'django.contrib.auth.backends.AllowAllUsersModelBackend',
-# ]
+AUTH_USER_MODEL = 'accounts.User'
+AUTHENTICATION_BACKENDS = [
+    'accounts.authentication.PasswordLessAuthenticationBackend',
+    'django.contrib.auth.backends.AllowAllUsersModelBackend',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
