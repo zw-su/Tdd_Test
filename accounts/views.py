@@ -24,7 +24,7 @@ def send_email(request):
     #   request,
     #   messages.SUCCESS,
     #   "Check your email, we've sent you a link you can open")
-    return redirect('/')
+    return redirect(f'{url}')
 
 
 def login(request):
@@ -32,4 +32,9 @@ def login(request):
     user = auth.authenticate(uid=request.GET.get('token'))
     if user:
         auth.login(request, user)
+    return redirect('/')
+
+
+def logout(request):
+    auth.logout(request)
     return redirect('/')
