@@ -44,16 +44,9 @@ class LoginTest(FunctionalTest):
         self.driver.get(url)
 
         # 她登陆了！
-        self.wait_for(lambda:
-                      self.driver.find_element_by_link_text('Log out'))
-
-        navbar = self.driver.find_element_by_css_selector('.navbar')
-        self.assertIn(TEST_EMAIL, navbar.text)
-        
+        self.wait_to_be_logged_in(email=TEST_EMAIL)
         # 现在她要退出
         self.driver.find_element_by_link_text('Log out').click()
 
         # 她退出了
-        self.wait_for(lambda:self.driver.find_element_by_name('email'))
-        navbar = self.driver.find_element_by_css_selector('.navbar')
-        self.assertNotIn(TEST_EMAIL, navbar.text)
+        self.wait_to_be_logged_out(email=TEST_EMAIL)

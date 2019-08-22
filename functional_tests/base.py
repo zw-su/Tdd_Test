@@ -40,6 +40,16 @@ class FunctionalTest(StaticLiveServerTestCase):
                     raise e
                 time.sleep(0.5)
 
+    def wait_to_be_logged_in(self, email):
+        self.wait_for(
+            lambda: self.driver.find_element_by_link_text('Log out'))
+        navbar = self.driver.find_element_by_css_selector('.navbar')
+        self.assertIn(email, navbar.text)
+
+    def wait_to_be_logged_out(self, email):
+        self.wait_for(lambda: self.driver.find_element_by_name('email'))
+        navbar = self.driver.find_element_by_css_selector('.navbar')
+        self.assertNotIn(email, navbar.text)
 
     def check_rowtext_in_listTable(self, row_text):
         # table = self.driver.find_element_by_id('id_list_table')
