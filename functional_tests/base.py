@@ -3,7 +3,8 @@
 # 第一个TDD测试的脚本
 
 from selenium import webdriver
-import os, time
+import os
+import time
 # from django.test import LiveServerTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.support.wait import WebDriverWait
@@ -29,25 +30,32 @@ class FunctionalTest(StaticLiveServerTestCase):
         '''定位input元素'''
         return self.driver.find_element_by_id('id_text')
 
+    def wait_(fn):
+        def modified_fn(*args, **kwargs):
+            start_time = time.time()
+            while True:
+                try:
+                    return fn(*args, **kwargs)
+                except (AssertionError, WebDriverException) as e:
+                    if time.time() - start_time > MAX_WAIT:
+                        raise e
+                    time.sleep(0.5)
+        return modified_fn
+
+    @wait_
     def wait_for(self, fn):
         '''等待元素找到'''
-        start_time = time.time()
-        while True:
-            try:
-                return fn()
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
+        return fn()
 
+    @wait_
     def wait_to_be_logged_in(self, email):
-        self.wait_for(
-            lambda: self.driver.find_element_by_link_text('Log out'))
+        self.driver.find_element_by_link_text('Log out')
         navbar = self.driver.find_element_by_css_selector('.navbar')
         self.assertIn(email, navbar.text)
 
+    @wait_
     def wait_to_be_logged_out(self, email):
-        self.wait_for(lambda: self.driver.find_element_by_name('email'))
+        self.driver.find_element_by_name('email')
         navbar = self.driver.find_element_by_css_selector('.navbar')
         self.assertNotIn(email, navbar.text)
 

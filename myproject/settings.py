@@ -44,7 +44,6 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'accounts.User'
 AUTHENTICATION_BACKENDS = [
     'accounts.authentication.PasswordLessAuthenticationBackend',
-    'django.contrib.auth.backends.AllowAllUsersModelBackend',
 ]
 
 MIDDLEWARE = [
@@ -137,7 +136,7 @@ STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "../STATIC_ROOT"))
 
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_HOST_USER = '344655096@qq.com'
-EMAIL_HOST_PASSWORD = 'alfdeqiajogfcabb'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
