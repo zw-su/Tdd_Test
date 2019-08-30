@@ -16,11 +16,28 @@ MAX_WAIT = 8
 
 
 class FunctionalTest(StaticLiveServerTestCase):
+
+    def usePlatform(self):
+        import platform
+        sysstr = platform.system()
+        if sysstr == "Linux":
+            from selenium.webdriver.chrome.options import Options
+            options = Options()
+            options.add_argument('--headless')
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
+            return options
+        return None
+
     def setUp(self):
-        self.driver = webdriver.Chrome()
-        staging_server = os.environ.get("STAGING_SERVER")
-        if staging_server:
-            self.live_server_url = 'http://' + staging_server
+        options = self.usePlatform()
+        if options:
+            self.driver = webdriver.Chrome(chrome_options=options)
+        else:
+            self.driver = webdriver.Chrome()
+            staging_server = os.environ.get("STAGING_SERVER")
+            if staging_server:
+                self.live_server_url = 'http://' + staging_server
 
     def tearDown(self):
         self.driver.refresh()

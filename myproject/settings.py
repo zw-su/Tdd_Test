@@ -134,6 +134,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "../STATIC_ROOT"))
 
+
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_HOST_USER = '344655096@qq.com'
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
